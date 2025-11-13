@@ -1,18 +1,18 @@
-import { Navigate, Route, Routes } from "react-router";
-import PrivateRoutes from "./PrivateRoutes";
-import PublicRoutes from "./PublicRoutes";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { PrivateRoute } from "./PrivateRoute";
+import { PublicRoute } from "./PublicRoute";
 
 // Paginas
-import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/auth/LoginPage";
-import RegisterPage from "../pages/auth/RegisterPage";
-import ProfilePage from "../pages/ProfilePage";
-import TasksPage from "../pages/TasksPage";
+import { HomePage } from "../pages/Home";
+import { LoginPage } from "../pages/Login";
+import { RegisterPage } from "../pages/Register";
+import { ProfilePage } from "../pages/Profile";
+import { TasksPage } from "../pages/Tasks";
 
 export const AppRouter = ({ authStatus, onLogin, onLogout }) => {
   return (
     <Routes>
-      <Route element={<PublicRoutes authStatus={authStatus} />}>
+      <Route element={<PublicRoute isAuth={authStatus} />}>
         <Route path="/login" element={<LoginPage onLoginSuccess={onLogin} />} />
         <Route
           path="/register"
@@ -20,7 +20,7 @@ export const AppRouter = ({ authStatus, onLogin, onLogout }) => {
         />
       </Route>
 
-      <Route element={<PrivateRoutes authStatus={authStatus} />}>
+      <Route element={<PrivateRoute isAuth={authStatus} />}>
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile" element={<ProfilePage onLogout={onLogout} />} />
         <Route path="/tasks" element={<TasksPage />} />
@@ -28,9 +28,7 @@ export const AppRouter = ({ authStatus, onLogin, onLogout }) => {
 
       <Route
         path="*"
-        element={
-          <Navigate to={authStatus === "authenticated" ? "/home" : "/login"} />
-        }
+        element={<Navigate to={authStatus ? "/home" : "/login"} />}
       />
     </Routes>
   );

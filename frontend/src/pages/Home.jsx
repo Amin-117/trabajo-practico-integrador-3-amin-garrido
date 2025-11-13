@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Loading } from "../components/Loading";
 
-const HomePage = () => {
+export const HomePage = () => {
   const [userData, setUserData] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [Loagind, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const loadHomeData = async () => {
     try {
@@ -42,46 +42,61 @@ const HomePage = () => {
       setLoading(false);
     }
   };
-};
 
-useEffect(() => {
-  loadHomeData();
-}, []);
+  useEffect(() => {
+    loadHomeData();
+  }, []);
 
-const totalTasks = tasks.length;
-const completedTasks = taks.filter((task) => task.is_completed).length;
-const pendingTasks = totalTasks - completedTasks;
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter((task) => task.is_completed).length;
+  const pendingTasks = totalTasks - completedTasks;
 
-if (loading) {
+  if (loading) {
+    return (
+      <main className="container-fluid py-4">
+        <div className="container">
+          <Loading />
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main>
-      <Loading />
+    <main className="container-fluid py-4">
+      <div className="container">
+        <div className="card p-4 mb-4">
+          <h1 className="mb-3">Bienvenido, {userData?.name || "Usuario"}</h1>
+
+          <div className="row">
+            <div className="col-md-3">
+              <div className="card text-center p-3 mb-3">
+                <h3 className="mb-0">{totalTasks}</h3>
+                <p className="mb-0">Total tareas</p>
+              </div>
+            </div>
+
+            <div className="col-md-3">
+              <div className="card text-center p-3 mb-3">
+                <h3 className="mb-0">{completedTasks}</h3>
+                <p className="mb-0">Completadas</p>
+              </div>
+            </div>
+
+            <div className="col-md-3">
+              <div className="card text-center p-3 mb-3">
+                <h3 className="mb-0">{pendingTasks}</h3>
+                <p className="mb-0">Pendientes</p>
+              </div>
+            </div>
+
+            <div className="col-md-3 d-flex align-items-center">
+              <Link className="btn btn-primary" to="/tasks">
+                Ir a mis tareas
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
-}
-
-return (
-  <main>
-    <h1> Binvenido, {userData?.name || "Usuario"}</h1>
-    <div>
-      <div>
-        <h3>{totalTasks}</h3>
-        <p>Total tareas</p>
-      </div>
-
-      <div>
-        <h3>{completedTasks}</h3>
-        <p>Completadas</p>
-      </div>
-
-      <div>
-        <h3>{pendingTasks}</h3>
-        <p>Pendientes</p>
-      </div>
-
-      <div>
-        <Link to="/tasks">Ir a mis tareas</Link>
-      </div>
-    </div>
-  </main>
-);
+};

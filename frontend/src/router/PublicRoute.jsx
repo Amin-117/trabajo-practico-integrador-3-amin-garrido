@@ -1,8 +1,9 @@
-import { Navigate } from "react-router-dom";
+// PublicRoute.jsx
+import { Navigate, Outlet } from "react-router-dom";
 
-export const PublicRoute = ({ children, isAuth }) => {
-  if (isAuth) {
-    return <Navigate to="/home" />;
+export const PublicRoute = ({ authStatus }) => {
+  if (authStatus === "authenticated") {
+    return <Navigate to="/home" replace />;
   }
-  return children;
+  return <Outlet />;
 };

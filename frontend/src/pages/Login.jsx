@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router";
-import useForm from "../hooks/useFrom";
+import { Link } from "react-router-dom";
+import { useForm } from "../hooks/useFrom";
 import { Loading } from "../components/Loading";
 
-const LoadingPage = () => {
+export const LoginPage = ({ onLoginSuccess }) => {
   const { values, handleChange, handleReset } = useForm({
     username: "",
     password: "",
@@ -26,9 +26,9 @@ const LoadingPage = () => {
       const data = await res.json();
 
       if (res.ok) {
-        onloginSuccess();
+        onLoginSuccess();
       } else {
-        alert(data.message || "credenciales invalidas");
+        alert(data.message || "Credenciales inválidas");
         handleReset();
       }
     } catch (error) {
@@ -38,49 +38,63 @@ const LoadingPage = () => {
       setLoading(false);
     }
   };
+
+  return (
+    <main className="container-fluid py-4">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <div className="card p-4">
+              {loading && <Loading />}
+
+              <h2 className="mb-3">Bienvenido</h2>
+              <p>Inicia sesión para continuar</p>
+
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="username" className="form-label">
+                    Usuario
+                  </label>
+                  <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    value={values.username}
+                    onChange={handleChange}
+                    placeholder="Tu nombre de usuario"
+                    className="form-control"
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">
+                    Contraseña
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    value={values.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    className="form-control"
+                    required
+                  />
+                </div>
+
+                <button className="btn btn-primary" type="submit">
+                  Ingresar
+                </button>
+              </form>
+
+              <p className="mt-3">
+                ¿No tienes cuenta? <Link to="/register">Registrate</Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 };
-
-return (
-  <main>
-    {loading && <Loading />}
-
-    <div>
-      <h2>Bienvenido</h2>
-      <p>Inicia sesión para continuar</p>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">Usuario</label>
-          <input
-            id="username"
-            type="text"
-            name="username"
-            value={values.username}
-            onChange={handleChange}
-            placeholder="Tu nombre de usuario"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password">Contraseña</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            value={values.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            required
-          />
-        </div>
-
-        <button type="submit">Ingresar</button>
-      </form>
-
-      <p>
-        ¿No tienes cuenta? <Link to="/register">Registrate</Link>
-      </p>
-    </div>
-  </main>
-);
