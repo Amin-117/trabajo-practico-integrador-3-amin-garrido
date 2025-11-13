@@ -60,3 +60,28 @@ if (loading) {
   );
 }
 
+return (
+  <main>
+    <h1> Binvenido, {userData?.name || "Usuario"}</h1>
+    <div>
+      <div>
+        <h3>{totalTasks}</h3>
+        <p>Total tareas</p>
+      </div>
+
+      <div>
+        <h3>{completedTasks}</h3>
+        <p>Completadas</p>
+      </div>
+
+      <div>
+        <h3>{pendingTasks}</h3>
+        <p>Pendientes</p>
+      </div>
+
+      <div>
+        <Link to="/tasks">Ir a mis tareas</Link>
+      </div>
+    </div>
+  </main>
+);
