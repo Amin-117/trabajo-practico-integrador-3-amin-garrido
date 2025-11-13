@@ -1,13 +1,13 @@
-import { useState, useEffect, useEffectEvent } from "react";
+import { useState, useEffect } from "react";
 import { Loading } from "../components/Loading";
-import { useForm } from "../hooks/useFrom";
+import useForm from "../hooks/useFrom";
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const { values, handleChange, handleReset } = useForm({
-    tittle: "",
+  const { values, setValues, handleChange, handleReset } = useForm({
+    title: "",
     description: "",
     is_completed: false,
   });
@@ -15,10 +15,7 @@ const TasksPage = () => {
   const [idToEdit, setIdToEdit] = useState(null);
 
   const fetchTasks = async () => {
-    if (tasks.length === 0) {
-      setLoading(true);
-    }
-
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:3000/api/tasks-by-user", {
         credentials: "include",
@@ -27,7 +24,8 @@ const TasksPage = () => {
         const data = await res.json();
         setTasks(data.tasks || (Array.isArray(data) ? data : []));
       } else {
-        console.error("error al obtener las tareas", error);
+        const data = await res.json().catch(() => ({}));
+        console.error("error al obtener las tareas", data);
         setTasks([]);
       }
     } catch (error) {
@@ -37,39 +35,39 @@ const TasksPage = () => {
       setLoading(false);
     }
   };
-};
 
-useEffect(() => {
-  fetchTasks();
-}, []);
+  useEffect(() => {
+    fetchTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-const handleSumit = async (e) => {
-  e.prevenDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
   if (idToEdit) {
-    hanldeUpdateTask();
+    await handleUpdateTask();
   } else {
-    hanldeCreateTaks();
+    await handleCreateTask();
   }
 };
 
 const handleSelectEdit = (task) => {
   setIdToEdit(task.id);
   setValues({
-    tittle: task.tittle,
+    title: task.title,
     description: task.description,
     is_completed: task.is_completed,
   });
 };
 
-const hanldeCancelEdit = () => {
+const handleCancelEdit = () => {
   setIdToEdit(null);
-  hanldeReset();
+  handleReset();
 };
 
-const hanldeCreateTaks = async () => {
-  if (!values.tittle) {
-    alert("el titulo es obligatorio");
+const handleCreateTask = async () => {
+  if (!values.title) {
+    alert("El título es obligatorio");
     return;
   }
   try {
@@ -80,22 +78,22 @@ const hanldeCreateTaks = async () => {
       body: JSON.stringify(values),
     });
     if (res.ok) {
-      alert("tarea creada exitosamente");
-      hanldeReset();
+      alert("Tarea creada exitosamente");
+      handleReset();
       fetchTasks();
     } else {
-      const data = await res.json();
-      alert(data.message || "error al crear tarea");
+      const data = await res.json().catch(() => ({}));
+      alert(data.message || "Error al crear tarea");
     }
   } catch (error) {
     console.error(error);
-    alert("error de la conexion al crear tarea");
+    alert("Error de la conexión al crear tarea");
   }
 };
 
-const hanldeUpdateTask = async () => {
-  if (!values.tittle) {
-    alert("el titulo es obligatorio");
+const handleUpdateTask = async () => {
+  if (!values.title) {
+    alert("El título es obligatorio");
     return;
   }
   try {
@@ -107,16 +105,16 @@ const hanldeUpdateTask = async () => {
     });
 
     if (res.ok) {
-      alert("tarea actualizada correctamente");
-      hanldeCancelEdit();
+      alert("Tarea actualizada correctamente");
+      handleCancelEdit();
       fetchTasks();
     } else {
-      const data = await res.json();
-      alert(data.message || "error al actualizar la tarea");
+      const data = await res.json().catch(() => ({}));
+      alert(data.message || "Error al actualizar la tarea");
     }
   } catch (error) {
     console.error(error);
-    alert("error de la conexion al actualizar la tarea");
+    alert("Error de la conexión al actualizar la tarea");
   }
 };
 
@@ -143,94 +141,97 @@ const handleDeleteTask = async (taskId) => {
   }
 };
 
-return (
-  <main>
-    <div>
-      <section>
-        <h2>{idToEdit ? "Editar" : "Crear"} Tarea</h2>
+  return (
+    <main>
+      <div>
+        <section>
+          <h2>{idToEdit ? "Editar" : "Crear"} Tarea</h2>
 
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="title">Título</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={values.title}
-              onChange={handleChange}
-              placeholder="Ej: Comprar leche"
-            />
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="title">Título</label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={values.title}
+                onChange={handleChange}
+                placeholder="Ej: Comprar leche"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="description">Descripción</label>
-            <textarea
-              id="description"
-              name="description"
-              value={values.description}
-              onChange={handleChange}
-              placeholder="Detalles de la tarea..."
-            ></textarea>
-          </div>
+            <div>
+              <label htmlFor="description">Descripción</label>
+              <textarea
+                id="description"
+                name="description"
+                value={values.description}
+                onChange={handleChange}
+                placeholder="Detalles de la tarea..."
+              ></textarea>
+            </div>
 
-          <div>
-            <input
-              type="checkbox"
-              id="is_completed"
-              name="is_completed"
-              checked={values.is_completed}
-              onChange={handleChange}
-            />
-            <label htmlFor="is_completed">Marcar como completada</label>
-          </div>
+            <div>
+              <input
+                type="checkbox"
+                id="is_completed"
+                name="is_completed"
+                checked={values.is_completed}
+                onChange={handleChange}
+              />
+              <label htmlFor="is_completed">Marcar como completada</label>
+            </div>
 
-          <button type="submit">
-            {idToEdit ? "Actualizar Tarea" : "Guardar Tarea"}
-          </button>
-
-          {idToEdit && (
-            <button type="button" onClick={handleCancelEdit}>
-              Cancelar Edición
+            <button type="submit">
+              {idToEdit ? "Actualizar Tarea" : "Guardar Tarea"}
             </button>
-          )}
-        </form>
-      </section>
 
-      <section>
-        <h2>Mis Tareas</h2>
-
-        {loading && <Loading />}
-
-        {!loading && (
-          <>
-            {tasks.length === 0 ? (
-              <p>No tienes tareas. ¡Agrega una!</p>
-            ) : (
-              <div>
-                {tasks.map((task) => (
-                  <div key={task.id}>
-                    <div>
-                      <h3>
-                        {task.title} {task.is_completed ? "(Completada)" : ""}
-                      </h3>
-                      <p>{task.description}</p>
-                    </div>
-
-                    <div>
-                      <button onClick={() => handleSelectEdit(task)}>
-                        Editar
-                      </button>
-                      <button onClick={() => handleDeleteTask(task.id)}>
-                        Borrar
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            {idToEdit && (
+              <button type="button" onClick={handleCancelEdit}>
+                Cancelar Edición
+              </button>
             )}
-          </>
-        )}
-      </section>
-    </div>
-  </main>
-);
+          </form>
+        </section>
+
+        <section>
+          <h2>Mis Tareas</h2>
+
+          {loading && <Loading />}
+
+          {!loading && (
+            <>
+              {tasks.length === 0 ? (
+                <p>No tienes tareas. ¡Agrega una!</p>
+              ) : (
+                <div>
+                  {tasks.map((task) => (
+                    <div key={task.id}>
+                      <div>
+                        <h3>
+                          {task.title} {task.is_completed ? "(Completada)" : ""}
+                        </h3>
+                        <p>{task.description}</p>
+                      </div>
+
+                      <div>
+                        <button onClick={() => handleSelectEdit(task)}>
+                          Editar
+                        </button>
+                        <button onClick={() => handleDeleteTask(task.id)}>
+                          Borrar
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </section>
+      </div>
+    </main>
+  );
+};
+
+export default TasksPage;
