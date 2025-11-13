@@ -120,7 +120,7 @@ const hanldeUpdateTask = async () => {
   }
 };
 
-const handleDelete = async (taskid) => {
+const handleDeleteTask = async (taskId) => {
   if (!window.confirm("¿estas seguro de querer borrar esta tarea?")) {
     return;
   }
@@ -220,7 +220,7 @@ return (
                       <button onClick={() => handleSelectEdit(task)}>
                         Editar
                       </button>
-                      <button onClick={() => handleDelete(task.id)}>
+                      <button onClick={() => handleDeleteTask(task.id)}>
                         Borrar
                       </button>
                     </div>
