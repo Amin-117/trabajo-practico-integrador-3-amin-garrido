@@ -31,7 +31,6 @@ export const ProfilePage = ({ onLogout }) => {
 
   useEffect(() => {
     fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogoutClick = async () => {

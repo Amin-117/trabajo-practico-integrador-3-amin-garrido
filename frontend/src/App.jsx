@@ -12,9 +12,11 @@ export const App = () => {
       const res = await fetch("http://localhost:3000/api/profile", {
         credentials: "include",
       });
+      console.log(res); 
 
       if (res.ok) {
         setAuthStatus("authenticated");
+        console.log(authStatus)
       } else {
         setAuthStatus("unauthenticated");
       }

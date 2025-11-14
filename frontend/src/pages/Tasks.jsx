@@ -15,7 +15,9 @@ export const TasksPage = () => {
   const [idToEdit, setIdToEdit] = useState(null);
 
   const fetchTasks = async () => {
-    setLoading(true);
+    if (tasks.length === 0) {
+      setLoading(true);
+    }
     try {
       const res = await fetch("http://localhost:3000/api/tasks-by-user", {
         credentials: "include",

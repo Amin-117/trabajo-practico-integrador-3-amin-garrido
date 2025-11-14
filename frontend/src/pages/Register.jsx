@@ -31,8 +31,8 @@ export const RegisterPage = ({ onLoginSuccess }) => {
       const res = await fetch("http://localhost:3000/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify(payload),
+        credentials: "include",
       });
 
       const data = await res.json();

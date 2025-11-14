@@ -10,6 +10,7 @@ import { ProfilePage } from "../pages/Profile";
 import { TasksPage } from "../pages/Tasks";
 
 export const AppRouter = ({ authStatus, onLogin, onLogout }) => {
+  console.log(authStatus, "desde appRputer");
   return (
     <Routes>
       <Route element={<PublicRoute isAuth={authStatus} />}>
